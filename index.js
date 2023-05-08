@@ -43,15 +43,14 @@ app.get('/test', async (req, res) => {
       
       return `
       <html>
-      <head>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-      </head>
-      <body>
-        <div id="chart-container"></div>
-          ${canvas + script}
-      </body>
-    </html>`
-    ;
+        <head>
+          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        </head>
+        <body>
+          <div id="chart-container"></div>
+            ${canvas + script}
+        </body>
+      </html>`;
     }
     
     let { timeStamp, chartType, deviceName } = req.query;
@@ -62,7 +61,11 @@ app.get('/test', async (req, res) => {
     // const chartType = 'day'
     // const deviceName = '(電錶)電盤總電'
 
-    const result = await axios(`http://${host}:${port}/ezcon/api/demandChart?timeStamp=${timeStamp}&chartType=${chartType}&deviceName=${deviceName}`)
+    const axiosConfig = {
+      timeout: 5000, // 設定 5 秒的超時時間
+    };
+
+    const result = await axios(`http://${host}:${port}/ezcon/api/demandChart?timeStamp=${timeStamp}&chartType=${chartType}&deviceName=${deviceName}`,axiosConfig)
     const demandData = result.data;
     console.log('demandData',demandData)
 
@@ -73,6 +76,18 @@ app.get('/test', async (req, res) => {
     res.end();
   } catch (err) {
     console.log(err)
+    res.status(500).send(`
+    <html>
+      <head>
+        <title>Error</title>
+      </head>
+      <body>
+        <h1>Error</h1>
+        <p>Something went wrong. Please try again later.</p>
+      </body>
+    </html>
+  `);
+
   }
 })
 
