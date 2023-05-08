@@ -1,8 +1,8 @@
-const express = require('express');
-const app = express();
-const axios = require('axios')
-const moment = require('moment')
+import express from 'express';
+import axios from 'axios';
+import dayjs from 'dayjs';
 
+const app = express();
 
 app.get('/test', async (req, res) => {
   try {
@@ -13,7 +13,7 @@ app.get('/test', async (req, res) => {
       const chartData = {
         labels: labels,
         datasets: [{
-          label: `Demand Data-${moment(time).format('YYYY-MM-DD')}`,
+          label: `Demand Data-${dayjs(time).format('YYYY-MM-DD')}`,
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
           borderColor: 'rgba(255, 99, 132, 1)',
           borderWidth: 1,
@@ -41,7 +41,17 @@ app.get('/test', async (req, res) => {
         </script>
       `;
       
-      return canvas + script;
+      return `
+      <html>
+      <head>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      </head>
+      <body>
+        <div id="chart-container"></div>
+          ${canvas + script}
+      </body>
+    </html>`
+    ;
     }
     
     const host = '192.168.0.201'
@@ -55,30 +65,17 @@ app.get('/test', async (req, res) => {
     console.log('demandData',demandData)
 
     const chartHtml = drawChart(demandData,timeStamp);
-  
-    const html = 
-    `
-      <html>
-        <head>
-          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        </head>
-        <body>
-          <div id="chart-container"></div>
-            ${chartHtml}
-        </body>
-      </html>
-    `
+    
     res.setHeader('Content-Type', 'text/html');
-    res.write(html);
+    res.write(chartHtml);
     res.end();
   } catch (err) {
     console.log(err)
   }
 })
 
-
 app.get('/', async (req, res) => {
-  res.send('OK')
+  res.send('test OK')
 });
 
 app.listen(3000, () => {
