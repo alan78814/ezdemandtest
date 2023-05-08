@@ -54,11 +54,13 @@ app.get('/test', async (req, res) => {
     ;
     }
     
+    let { timeStamp, chartType, deviceName } = req.query;
+
     const host = '192.168.0.201'
     const port = 9999
-    const timeStamp = 1651622400000// 5/4
-    const chartType = 'day'
-    const deviceName = '(電錶)電盤總電'
+    timeStamp = dayjs(timeStamp).valueOf() // 1651622400000 5/4
+    // const chartType = 'day'
+    // const deviceName = '(電錶)電盤總電'
 
     const result = await axios(`http://${host}:${port}/ezcon/api/demandChart?timeStamp=${timeStamp}&chartType=${chartType}&deviceName=${deviceName}`)
     const demandData = result.data;
@@ -75,7 +77,20 @@ app.get('/test', async (req, res) => {
 })
 
 app.get('/', async (req, res) => {
-  res.send('test OK')
+  res.send(`
+    <form action="/test" method="GET">
+      <label for="timeStamp">日期：</label>
+      <input type="text" id="date" name="timeStamp"><br><br>
+      
+      <label for="chartType">圖表類型：</label>
+      <input type="text" id="chartType" name="chartType"><br><br>
+      
+      <label for="deviceName">儀器名稱：</label>
+      <input type="text" id="deviceName" name="deviceName"><br><br>
+      
+      <button type="submit">送出</button>
+    </form>
+  `);
 });
 
 app.listen(3000, () => {
