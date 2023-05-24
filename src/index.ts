@@ -3,6 +3,11 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 
 const app = express();
+// For parsing application/json
+app.use(express.json());
+ 
+// For parsing application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/test', async (req , res) => {
   try {
@@ -53,7 +58,7 @@ app.get('/test', async (req , res) => {
       </html>`;
     }
     
-    let { timeStamp, chartType, deviceName } = req.query;
+    let { timeStamp, chartType, deviceName, apiName} = req.query;
 
     const host = '192.168.0.201'
     const port = 9999
@@ -65,7 +70,7 @@ app.get('/test', async (req , res) => {
       timeout: 5000, // 設定 5 秒的超時時間
     };
 
-    const result = await axios(`http://${host}:${port}/ezcon/api/demandChart?timeStamp=${timeStampValue}&chartType=${chartType}&deviceName=${deviceName}`,axiosConfig)
+    const result = await axios(`http://${host}:${port}/ezcon/api/${apiName}?timeStamp=${timeStampValue}&chartType=${chartType}&deviceName=${deviceName}`,axiosConfig)
     const demandData = result.data;
     console.log('demandData',demandData)
 
@@ -91,8 +96,40 @@ app.get('/test', async (req , res) => {
   }
 })
 
+app.post('/tonnetTest',(req, res) => {
+  console.log('接受通航外拋事件')
+  if (dayjs(req.body.time).isAfter('2023-05-12 13:35')) {
+    console.log('reqbody',req.body)
+    console.log('===============================')
+  } 
+
+  // if (req.body.dev_name === '門口機112' && dayjs(req.body.time).isAfter('2023-05-12 13:35')) {
+  //   console.log('reqbody',req.body)
+  //   console.log('===============================')
+  // } 
+
+  // console.log('reqbody',req.body)
+  // console.log('===============================')
+});
+
 app.get('/', async (req, res) => {
   res.send(`
+    <style>
+      body {
+        background: linear-gradient(to bottom, #e0f3ff, #a8d4ff); /* 设置背景渐变色 */
+        animation: gradientAnimation 5s infinite alternate; /* 应用背景动画效果 */
+      }
+
+      @keyframes gradientAnimation {
+        0% {
+          background-position: 0% 50%;
+        }
+        100% {
+          background-position: 100% 50%;
+        }
+      }
+    </style>
+
     <form action="/test" method="GET">
       <label for="timeStamp">日期：</label>
       <input type="text" id="date" name="timeStamp"><br><br>
@@ -102,11 +139,16 @@ app.get('/', async (req, res) => {
       
       <label for="deviceName">儀器名稱：</label>
       <input type="text" id="deviceName" name="deviceName"><br><br>
+
+      <label for="apiName">api名稱:</label>
+      <input type="text" id="apiName" name="apiName"><br><br>
       
       <button type="submit">送出</button>
     </form>
   `);
 });
+
+
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
