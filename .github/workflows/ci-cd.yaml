@@ -41,8 +41,8 @@ jobs:
           push: true
           tags: alan78814/ezdemandtest:latest
       
-      - name: Restart Docker container
-        run: docker restart ezdemandtest-container
+      # - name: Restart Docker container
+      #   run: docker restart ezdemandtest-container
 
 
         
