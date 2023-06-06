@@ -1,0 +1,39 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Build application
+        run: npm run build
+      
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v1
+      
+      - name: Build Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ezdemandtest/ezdemandtest:latest
+      
+      - name: Restart Docker container
+        run: docker restart ezdemandtest-container
+
