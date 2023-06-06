@@ -33,7 +33,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ezdemandtest/ezdemandtest:latest
+          tags: alan78814/ezdemandtest:latest
       
       - name: Restart Docker container
         run: docker restart ezdemandtest-container
