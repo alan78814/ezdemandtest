@@ -134,7 +134,7 @@ app.get('/', async (req, res) => {
       <label for="timeStamp">日期：</label>
       <input type="text" id="date" name="timeStamp"><br><br>
       
-      <label for="chartType">圖表類型test9:</label>
+      <label for="chartType">圖表類型test10:</label>
       <input type="text" id="chartType" name="chartType"><br><br>
       
       <label for="deviceName">儀器名稱：</label>
