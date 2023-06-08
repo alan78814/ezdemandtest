@@ -131,7 +131,7 @@ app.get('/', async (req, res) => {
     </style>
 
     <form action="/test" method="GET">
-      <label for="timeStamp">日期test:</label>
+      <label for="timeStamp">日期:</label>
       <input type="text" id="date" name="timeStamp"><br><br>
       
       <label for="chartType">圖表類型:</label>
