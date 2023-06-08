@@ -144,16 +144,16 @@ app.get('/', async (req, res) => {
     </style>
 
     <form action="/test" method="GET">
-      <label for="timeStamp">日期mactest:</label>
+      <label for="timeStamp">日期:</label>
       <input type="text" id="date" name="timeStamp"><br><br>
       
-      <label for="chartType">圖表類型mactest:</label>
+      <label for="chartType">圖表類型:</label>
       <input type="text" id="chartType" name="chartType"><br><br>
       
-      <label for="deviceName">儀器名稱mactest:</label>
+      <label for="deviceName">儀器名稱:</label>
       <input type="text" id="deviceName" name="deviceName"><br><br>
 
-      <label for="apiName">api名稱mactest:</label>
+      <label for="apiName">api名稱:</label>
       <input type="text" id="apiName" name="apiName"><br><br>
       
       <button type="submit">送出</button>
