@@ -1,6 +1,7 @@
 import express from 'express';
 import axios from 'axios';
 import dayjs from 'dayjs';
+import path from 'path'
 
 const app = express();
 // For parsing application/json
@@ -8,6 +9,14 @@ app.use(express.json());
  
 // For parsing application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
+
+app.use(express.static(path.join(__dirname, 'ezdemandtest')));
+
+app.get('/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, '..', filename);
+  res.sendFile(filePath);
+});
 
 app.get('/test', async (req , res) => {
   try {

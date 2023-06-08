@@ -6,11 +6,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const axios_1 = __importDefault(require("axios"));
 const dayjs_1 = __importDefault(require("dayjs"));
+const path_1 = __importDefault(require("path"));
 const app = (0, express_1.default)();
 // For parsing application/json
 app.use(express_1.default.json());
 // For parsing application/x-www-form-urlencoded
 app.use(express_1.default.urlencoded({ extended: true }));
+app.use(express_1.default.static(path_1.default.join(__dirname, 'ezdemandtest')));
+app.get('/:filename', (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path_1.default.join(__dirname, '..', filename);
+    res.sendFile(filePath);
+});
 app.get('/test', async (req, res) => {
     try {
         function drawChart(demandData, time) {
@@ -119,13 +126,13 @@ app.get('/', async (req, res) => {
     </style>
 
     <form action="/test" method="GET">
-      <label for="timeStamp">日期：</label>
+      <label for="timeStamp">日期:</label>
       <input type="text" id="date" name="timeStamp"><br><br>
       
-      <label for="chartType">圖表類型test:</label>
+      <label for="chartType">圖表類型:</label>
       <input type="text" id="chartType" name="chartType"><br><br>
       
-      <label for="deviceName">儀器名稱：</label>
+      <label for="deviceName">儀器名稱:</label>
       <input type="text" id="deviceName" name="deviceName"><br><br>
 
       <label for="apiName">api名稱:</label>
