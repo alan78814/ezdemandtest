@@ -42,7 +42,9 @@ jobs:
           tags: |
             alan78814/ezdemandtest:latest
             alan78814/ezdemandtest:${{ github.sha }}
-          
+          platforms: |
+            linux/amd64
+            linux/arm64          
       
       # - name: Restart Docker container
       #   run: docker restart ezdemandtest-container
