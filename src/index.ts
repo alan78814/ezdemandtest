@@ -1,7 +1,9 @@
 import express from 'express';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import path from 'path'
+import path from 'path';
+import { createHash } from 'crypto';
+
 
 const app = express();
 // For parsing application/json
@@ -105,20 +107,39 @@ app.get('/test', async (req , res) => {
   }
 })
 
-app.post('/tonnetTest',(req, res) => {
+app.post('/tonnetTest',async (req, res) => {
   console.log('接受通航外拋事件')
   if (dayjs(req.body.time).isAfter('2023-05-12 13:35')) {
     console.log('reqbody',req.body)
     console.log('===============================')
   } 
 
-  // if (req.body.dev_name === '門口機112' && dayjs(req.body.time).isAfter('2023-05-12 13:35')) {
-  //   console.log('reqbody',req.body)
-  //   console.log('===============================')
-  // } 
+  let token = null
+  axios.post('https://192.168.0.251:8443/oauth/token', {
+    grant_type:"client_t_credentials",
+    client_id: "98f37b45-6b82-4627-aceb-824ed6be9643",
+    client_secret: "s2soPagg9FdxsPVt0OaprlFXFmYf4qnKO83d2RzB",
+    scope:"*"
+  })
+  .then(response => {
+    console.log(response.data);
+    token = response.data
+  })
+  .catch(error => {
+    console.error(error);
+  });
 
-  // console.log('reqbody',req.body)
-  // console.log('===============================')
+  const nowTime = new Date().toISOString();
+
+  await axios.post('https://192.168.0.251:8443/v2/remote/security/12',
+  {
+    mode: 2,
+    room: '010101',
+    time: nowTime,
+    token: createHash('md5').update(`remote${dayjs(nowTime).format('YYYYMMDD')}010101${dayjs(nowTime).format('HHmmss')}`).digest('hex')
+  }
+  )
+
 });
 
 app.get('/', async (req, res) => {
