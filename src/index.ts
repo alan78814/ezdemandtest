@@ -8,7 +8,7 @@ import { createHash } from 'crypto';
 const app = express();
 // For parsing application/json
 app.use(express.json());
- 
+
 // For parsing application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
@@ -20,35 +20,37 @@ app.get('/:filename', (req, res) => {
   res.sendFile(filePath);
 });
 
-app.get('/test', async (req , res) => {
+app.get('/test', async (req, res) => {
   try {
     function drawChart(demandData: Record<string, number>, time: number) {
       const labels = Object.keys(demandData);
       const data = Object.values(demandData);
-      
+
       const chartData = {
         labels: labels,
-        datasets: [{
-          label: `Demand Data-${dayjs(time).format('YYYY-MM-DD')}`,
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderColor: 'rgba(255, 99, 132, 1)',
-          borderWidth: 1,
-          data: data,
-        }]
+        datasets: [
+          {
+            label: `Demand Data-${dayjs(time).format('YYYY-MM-DD')}`,
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1,
+            data: data,
+          },
+        ],
       };
-      
+
       const config = {
         type: 'bar',
         data: chartData,
         options: {
           scales: {
             y: {
-              beginAtZero: true
-            }
-          }
-        }
+              beginAtZero: true,
+            },
+          },
+        },
       };
-      
+
       const canvas = '<canvas id="myChart"></canvas>';
       const script = `
         <script>
@@ -56,7 +58,7 @@ app.get('/test', async (req , res) => {
           var myChart = new Chart(ctx, ${JSON.stringify(config)});
         </script>
       `;
-      
+
       return `
       <html>
         <head>
@@ -68,12 +70,12 @@ app.get('/test', async (req , res) => {
         </body>
       </html>`;
     }
-    
-    let { timeStamp, chartType, deviceName, apiName} = req.query;
 
-    const host = '192.168.0.201'
-    const port = 9999
-    const timeStampValue = dayjs(timeStamp as string).valueOf() // 1651622400000 5/4
+    let { timeStamp, chartType, deviceName, apiName } = req.query;
+
+    const host = '192.168.0.201';
+    const port = 9999;
+    const timeStampValue = dayjs(timeStamp as string).valueOf(); // 1651622400000 5/4
     // const chartType = 'day'
     // const deviceName = '(電錶)電盤總電'
 
@@ -81,17 +83,20 @@ app.get('/test', async (req , res) => {
       timeout: 5000, // 設定 5 秒的超時時間
     };
 
-    const result = await axios(`http://${host}:${port}/ezcon/api/${apiName}?timeStamp=${timeStampValue}&chartType=${chartType}&deviceName=${deviceName}`,axiosConfig)
+    const result = await axios(
+      `http://${host}:${port}/ezcon/api/${apiName}?timeStamp=${timeStampValue}&chartType=${chartType}&deviceName=${deviceName}`,
+      axiosConfig
+    );
     const demandData = result.data;
-    console.log('demandData',demandData)
+    console.log('demandData', demandData);
 
-    const chartHtml = drawChart(demandData,timeStampValue);
-    
+    const chartHtml = drawChart(demandData, timeStampValue);
+
     res.setHeader('Content-Type', 'text/html');
     res.write(chartHtml);
     res.end();
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(500).send(`
     <html>
       <head>
@@ -103,16 +108,15 @@ app.get('/test', async (req , res) => {
       </body>
     </html>
   `);
-
   }
-})
+});
 
 app.post('/tonnetTest',async (req, res) => {
   console.log('接受通航外拋事件')
   if (dayjs(req.body.time).isAfter('2023-05-12 13:35')) {
-    console.log('reqbody',req.body)
-    console.log('===============================')
-  } 
+    console.log('reqbody', req.body);
+    console.log('===============================');
+  }
 
   let token = null
   axios.post('https://192.168.0.251:8443/oauth/token', {
