@@ -25,13 +25,15 @@ app.get('/test', async (req, res) => {
             const data = Object.values(demandData);
             const chartData = {
                 labels: labels,
-                datasets: [{
+                datasets: [
+                    {
                         label: `Demand Data-${(0, dayjs_1.default)(time).format('YYYY-MM-DD')}`,
                         backgroundColor: 'rgba(255, 99, 132, 0.2)',
                         borderColor: 'rgba(255, 99, 132, 1)',
                         borderWidth: 1,
                         data: data,
-                    }]
+                    },
+                ],
             };
             const config = {
                 type: 'bar',
@@ -39,10 +41,10 @@ app.get('/test', async (req, res) => {
                 options: {
                     scales: {
                         y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
+                            beginAtZero: true,
+                        },
+                    },
+                },
             };
             const canvas = '<canvas id="myChart"></canvas>';
             const script = `
@@ -94,18 +96,12 @@ app.get('/test', async (req, res) => {
   `);
     }
 });
-app.post('/tonnetTest', (req, res) => {
+app.post('/tonnetTest', async (req, res) => {
     console.log('接受通航外拋事件');
-    if ((0, dayjs_1.default)(req.body.time).isAfter('2023-05-12 13:35')) {
+    if ((0, dayjs_1.default)(req.body.time).isAfter('2023-06-17 14:40')) {
         console.log('reqbody', req.body);
         console.log('===============================');
     }
-    // if (req.body.dev_name === '門口機112' && dayjs(req.body.time).isAfter('2023-05-12 13:35')) {
-    //   console.log('reqbody',req.body)
-    //   console.log('===============================')
-    // } 
-    // console.log('reqbody',req.body)
-    // console.log('===============================')
 });
 app.get('/', async (req, res) => {
     res.send(`
