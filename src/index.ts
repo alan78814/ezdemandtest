@@ -3,9 +3,43 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import path from 'path';
 import { createHash } from 'crypto';
-
+import iconv from 'iconv-lite';
+import bodyParser from 'body-parser';
+import rawBody from 'raw-body';
 
 const app = express();
+
+// app.use(bodyParser.raw({ type: '*/*' }));
+// app.post('/ezcon/api/winhome/event', async (req, res) => {
+//   try {
+//     console.log('接受穩鴻外拋事件');
+//     console.log('type', typeof req.body);
+//     console.log('reqBodyA', req.body);
+//     const decodedData = iconv.decode(req.body, 'big5');
+
+//     console.log('reqBodyB', decodedData);
+//   } catch (err) {
+//     console.log('err', err);
+//     res.end();
+//   }
+// });
+
+app.post('/ezcon/api/winhome/event', async (req, res) => {
+  try {
+    console.log('接受穩鴻外拋事件');
+    console.log('reqBodyA', req.body);
+    const bodyBuffer: Buffer = (await rawBody(req, {
+      encoding: null, // 以原始的 Buffer 形式获取数据
+    })) as unknown as Buffer;
+
+    const decodedData = iconv.decode(bodyBuffer, 'big5');
+    console.log('reqBodyB', decodedData);
+  } catch (err) {
+    console.log('err', err);
+    res.end();
+  }
+});
+
 // For parsing application/json
 app.use(express.json());
 
@@ -13,12 +47,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, 'ezdemandtest')));
-
-app.get('/:filename', (req, res) => {
-  const filename = req.params.filename;
-  const filePath = path.join(__dirname, '..', filename);
-  res.sendFile(filePath);
-});
 
 app.get('/test', async (req, res) => {
   try {
@@ -111,8 +139,8 @@ app.get('/test', async (req, res) => {
   }
 });
 
-app.post('/tonnetTest',async (req, res) => {
-  console.log('接受通航外拋事件')
+app.post('/tonnetTest', async (req, res) => {
+  console.log('接受通航外拋事件');
   if (dayjs(req.body.time).isAfter('2023-06-17 14:40')) {
     console.log('reqbody', req.body);
     console.log('===============================');
@@ -153,6 +181,12 @@ app.get('/', async (req, res) => {
       <button type="submit">送出</button>
     </form>
   `);
+});
+
+app.get('/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, '..', filename);
+  res.sendFile(filePath);
 });
 
 app.listen(3000, () => {

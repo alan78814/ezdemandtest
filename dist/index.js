@@ -7,17 +7,42 @@ const express_1 = __importDefault(require("express"));
 const axios_1 = __importDefault(require("axios"));
 const dayjs_1 = __importDefault(require("dayjs"));
 const path_1 = __importDefault(require("path"));
+const iconv_lite_1 = __importDefault(require("iconv-lite"));
+const raw_body_1 = __importDefault(require("raw-body"));
 const app = (0, express_1.default)();
+// app.use(bodyParser.raw({ type: '*/*' }));
+// app.post('/ezcon/api/winhome/event', async (req, res) => {
+//   try {
+//     console.log('接受穩鴻外拋事件');
+//     console.log('type', typeof req.body);
+//     console.log('reqBodyA', req.body);
+//     const decodedData = iconv.decode(req.body, 'big5');
+//     console.log('reqBodyB', decodedData);
+//   } catch (err) {
+//     console.log('err', err);
+//     res.end();
+//   }
+// });
+app.post('/ezcon/api/winhome/event', async (req, res) => {
+    try {
+        console.log('接受穩鴻外拋事件');
+        console.log('reqBodyA', req.body);
+        const bodyBuffer = (await (0, raw_body_1.default)(req, {
+            encoding: null, // 以原始的 Buffer 形式获取数据
+        }));
+        const decodedData = iconv_lite_1.default.decode(bodyBuffer, 'big5');
+        console.log('reqBodyB', decodedData);
+    }
+    catch (err) {
+        console.log('err', err);
+        res.end();
+    }
+});
 // For parsing application/json
 app.use(express_1.default.json());
 // For parsing application/x-www-form-urlencoded
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(path_1.default.join(__dirname, 'ezdemandtest')));
-app.get('/:filename', (req, res) => {
-    const filename = req.params.filename;
-    const filePath = path_1.default.join(__dirname, '..', filename);
-    res.sendFile(filePath);
-});
 app.get('/test', async (req, res) => {
     try {
         function drawChart(demandData, time) {
@@ -137,6 +162,11 @@ app.get('/', async (req, res) => {
       <button type="submit">送出</button>
     </form>
   `);
+});
+app.get('/:filename', (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path_1.default.join(__dirname, '..', filename);
+    res.sendFile(filePath);
 });
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
