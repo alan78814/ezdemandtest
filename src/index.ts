@@ -145,7 +145,7 @@ app.post('/tonnetTest', async (req, res) => {
     console.log ('type:', req.body.type)
     console.log('sensors:', req.body.sensors)
     console.log('time:', req.body.time)
-    console.log('alarm clear time:', req.body.event_handling?.[0]?.time)
+    console.log('event_handling:', req.body.event_handling)
     console.log('server accept message time:', dayjs().format('YYYY-MM-DD HH:mm:ss'))
     console.log('===============================');
   }

@@ -120,7 +120,6 @@ app.get('/test', async (req, res) => {
     }
 });
 app.post('/tonnetTest', async (req, res) => {
-    var _a, _b;
     console.log('接受通航外拋事件');
     if ((0, dayjs_1.default)(req.body.time).isAfter('2023-06-27 16:30')) {
         // console.log(req.body)
@@ -128,7 +127,7 @@ app.post('/tonnetTest', async (req, res) => {
         console.log('type:', req.body.type);
         console.log('sensors:', req.body.sensors);
         console.log('time:', req.body.time);
-        console.log('alarm clear time:', (_b = (_a = req.body.event_handling) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.time);
+        console.log('event_handling:', req.body.event_handling);
         console.log('server accept message time:', (0, dayjs_1.default)().format('YYYY-MM-DD HH:mm:ss'));
         console.log('===============================');
     }
