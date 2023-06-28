@@ -5,33 +5,31 @@ import path from 'path';
 import { createHash } from 'crypto';
 import iconv from 'iconv-lite';
 import bodyParser from 'body-parser';
-import rawBody from 'raw-body';
 
 const app = express();
 
-// app.use(bodyParser.raw({ type: '*/*' }));
-// app.post('/ezcon/api/winhome/event', async (req, res) => {
-//   try {
-//     console.log('接受穩鴻外拋事件');
-//     console.log('type', typeof req.body);
-//     console.log('reqBodyA', req.body);
-//     const decodedData = iconv.decode(req.body, 'big5');
-
-//     console.log('reqBodyB', decodedData);
-//   } catch (err) {
-//     console.log('err', err);
-//     res.end();
-//   }
-// });
-
 app.post('/ezcon/api/winhome/event', async (req, res) => {
   try {
-    console.log('接受穩鴻外拋事件');
-    console.log('reqBodyA', req.body);
-    const bodyBuffer: Buffer = (await rawBody(req, {
-      encoding: null, // 以原始的 Buffer 形式获取数据
-    })) as unknown as Buffer;
+    function getRawBody(req: express.Request): Promise<Buffer> {
+      return new Promise((resolve, reject) => {
+        const chunks: Buffer[] = [];
 
+        req.on('data', (chunk: Buffer) => {
+          chunks.push(chunk);
+        });
+
+        req.on('end', () => {
+          const bodyBuffer = Buffer.concat(chunks);
+          resolve(bodyBuffer);
+        });
+
+        req.on('error', (err: Error) => {
+          reject(err);
+        });
+      });
+    }
+    console.log('接受穩鴻外拋事件');
+    const bodyBuffer: Buffer = await getRawBody(req);
     const decodedData = iconv.decode(bodyBuffer, 'big5');
     console.log('reqBodyB', decodedData);
   } catch (err) {
@@ -141,8 +139,14 @@ app.get('/test', async (req, res) => {
 
 app.post('/tonnetTest', async (req, res) => {
   console.log('接受通航外拋事件');
-  if (dayjs(req.body.time).isAfter('2023-06-17 14:40')) {
-    console.log('reqbody', req.body);
+  if (dayjs(req.body.time).isAfter('2023-06-27 16:30')) {
+    // console.log(req.body)
+    console.log('dev_name:', req.body.dev_name);
+    console.log ('type:', req.body.type)
+    console.log('sensors:', req.body.sensors)
+    console.log('time:', req.body.time)
+    console.log('alarm clear time:', req.body.event_handling?.[0]?.time)
+    console.log('server accept message time:', dayjs().format('YYYY-MM-DD HH:mm:ss'))
     console.log('===============================');
   }
 });

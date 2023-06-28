@@ -8,28 +8,26 @@ const axios_1 = __importDefault(require("axios"));
 const dayjs_1 = __importDefault(require("dayjs"));
 const path_1 = __importDefault(require("path"));
 const iconv_lite_1 = __importDefault(require("iconv-lite"));
-const raw_body_1 = __importDefault(require("raw-body"));
 const app = (0, express_1.default)();
-// app.use(bodyParser.raw({ type: '*/*' }));
-// app.post('/ezcon/api/winhome/event', async (req, res) => {
-//   try {
-//     console.log('接受穩鴻外拋事件');
-//     console.log('type', typeof req.body);
-//     console.log('reqBodyA', req.body);
-//     const decodedData = iconv.decode(req.body, 'big5');
-//     console.log('reqBodyB', decodedData);
-//   } catch (err) {
-//     console.log('err', err);
-//     res.end();
-//   }
-// });
 app.post('/ezcon/api/winhome/event', async (req, res) => {
     try {
+        function getRawBody(req) {
+            return new Promise((resolve, reject) => {
+                const chunks = [];
+                req.on('data', (chunk) => {
+                    chunks.push(chunk);
+                });
+                req.on('end', () => {
+                    const bodyBuffer = Buffer.concat(chunks);
+                    resolve(bodyBuffer);
+                });
+                req.on('error', (err) => {
+                    reject(err);
+                });
+            });
+        }
         console.log('接受穩鴻外拋事件');
-        console.log('reqBodyA', req.body);
-        const bodyBuffer = (await (0, raw_body_1.default)(req, {
-            encoding: null, // 以原始的 Buffer 形式获取数据
-        }));
+        const bodyBuffer = await getRawBody(req);
         const decodedData = iconv_lite_1.default.decode(bodyBuffer, 'big5');
         console.log('reqBodyB', decodedData);
     }
@@ -122,9 +120,16 @@ app.get('/test', async (req, res) => {
     }
 });
 app.post('/tonnetTest', async (req, res) => {
+    var _a, _b;
     console.log('接受通航外拋事件');
-    if ((0, dayjs_1.default)(req.body.time).isAfter('2023-06-17 14:40')) {
-        console.log('reqbody', req.body);
+    if ((0, dayjs_1.default)(req.body.time).isAfter('2023-06-27 16:30')) {
+        // console.log(req.body)
+        console.log('dev_name:', req.body.dev_name);
+        console.log('type:', req.body.type);
+        console.log('sensors:', req.body.sensors);
+        console.log('time:', req.body.time);
+        console.log('alarm clear time:', (_b = (_a = req.body.event_handling) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.time);
+        console.log('server accept message time:', (0, dayjs_1.default)().format('YYYY-MM-DD HH:mm:ss'));
         console.log('===============================');
     }
 });
