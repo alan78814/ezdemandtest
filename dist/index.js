@@ -119,19 +119,19 @@ app.get('/test', async (req, res) => {
   `);
     }
 });
-app.post('/tonnetTest', async (req, res) => {
-    console.log('接受通航外拋事件');
-    if ((0, dayjs_1.default)(req.body.time).isAfter('2023-06-27 16:30')) {
-        // console.log(req.body)
-        console.log('dev_name:', req.body.dev_name);
-        console.log('type:', req.body.type);
-        console.log('sensors:', req.body.sensors);
-        console.log('time:', req.body.time);
-        console.log('event_handling:', req.body.event_handling);
-        console.log('server accept message time:', (0, dayjs_1.default)().format('YYYY-MM-DD HH:mm:ss'));
-        console.log('===============================');
-    }
-});
+// app.post('/tonnetTest', async (req, res) => {
+//   console.log('接受通航外拋事件');
+//   if (dayjs(req.body.time).isAfter('2023-06-27 16:30')) {
+//     //console.log(req.body)
+//     console.log('dev_name:', req.body.dev_name);
+//     console.log ('type:', req.body.type)
+//     console.log('sensors:', req.body.sensors)
+//     console.log('time:', req.body.time)
+//     console.log('event_handling:', req.body.event_handling)
+//     console.log('server accept message time:', dayjs().format('YYYY-MM-DD HH:mm:ss'))
+//     console.log('===============================');
+//   }
+// });
 app.get('/', async (req, res) => {
     res.send(`
     <style>
